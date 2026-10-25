@@ -568,7 +568,7 @@ fn u05_d_missing_glyphs_fail() {
     let divided = snapshot_with_cells(
         3,
         1,
-        vec![plain("a東", 3), blank(), blank()],
+        vec![plain("a東", 3), continuation(), continuation()],
         hidden_cursor(),
     );
     let error = render_snapshot_png(&divided, &strict_options(&set))
