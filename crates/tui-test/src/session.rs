@@ -383,6 +383,7 @@ impl Session {
             screen_dirty: true,
             last_screen_sample: started_at,
             last_visual_change_ms: 0,
+            last_output: None,
             diagnostic_error: None,
             last_change: Instant::now(),
             awaiting_start: None,
