@@ -892,7 +892,6 @@ impl Session {
         self.recorder.automatic_enabled()
     }
 
-<<<<<<< HEAD
     /// Send one mouse report after checks against the terminal modes.
     ///
     /// The method reads the tracking level, the encoding flag, the viewport,
