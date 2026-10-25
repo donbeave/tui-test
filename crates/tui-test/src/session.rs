@@ -385,6 +385,7 @@ impl Session {
             last_visual_change_ms: 0,
             diagnostic_error: None,
             last_change: Instant::now(),
+            last_output: None,
             awaiting_start: None,
             exited: None,
             exit_signal: None,

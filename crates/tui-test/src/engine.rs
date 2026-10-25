@@ -35,10 +35,6 @@ use crate::session::{
     capture_visual_state, scroll_emulator_and_record, try_capture_visual_state,
     Session as TerminalSession, TermState, TextHighlight,
 };
-use crate::session::{
-    capture_visual_state, scroll_emulator_and_record, try_capture_visual_state,
-    Session as TerminalSession, TermState, TextHighlight,
-};
 pub use crate::session::{CheckedInputError, CheckedMouseAction};
 use crate::snapshot::{
     capture_live, capture_time_ms, LiveHighlight, SnapshotMetadata, SnapshotOptions, SnapshotScope,
