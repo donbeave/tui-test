@@ -4,6 +4,7 @@ pub mod config;
 pub mod diagnostics;
 pub mod engine;
 pub mod input;
+pub mod launch;
 pub mod locator_query;
 pub mod logger;
 pub mod pixel;
@@ -22,6 +23,7 @@ mod session;
 pub use api::*;
 pub use diagnostics::*;
 pub use engine::Engine;
+pub use launch::{LaunchEnvMode, LaunchOptions, ResolvedLaunch};
 #[cfg(feature = "recording-raster")]
 pub use render::offline::{render_snapshot_png, write_snapshot_png, RenderedPng};
 pub use render::offline::{

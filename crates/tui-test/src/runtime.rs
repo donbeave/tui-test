@@ -12,6 +12,7 @@ use crate::api::{
 };
 use crate::diagnostics::ExecutionContext;
 use crate::engine::{CheckedInputError, CheckedMouseAction, Engine};
+use crate::launch::LaunchOptions;
 use crate::logger::Logger;
 use crate::snapshot::{SnapshotOptions, SnapshotScope, TerminalSnapshot};
 
@@ -464,6 +465,23 @@ impl Session {
     /// focus events.
     pub fn focus(&self, focused: bool) -> Result<(), CheckedInputError> {
         self.engine.focus(focused)
+    }
+
+    /// Spawn a child from native launch options under this session's
+    /// execution context.
+    ///
+    /// The launch supplies the program, arguments, environment, and working
+    /// directory as native values. The matching `RunOptions` fields
+    /// (`program`, `args`, `env`, and `cwd`) are ignored; the remaining
+    /// fields select the backend, profile, style, dimensions, readiness,
+    /// restart, timeouts, and recording behavior.
+    pub fn spawn_with(
+        &self,
+        launch: LaunchOptions,
+        options: RunOptions,
+    ) -> Result<OpenResult, TuiTestError> {
+        self.engine
+            .spawn_with_context(launch, options, self.context.clone())
     }
 
     /// Cancel pending operations, terminate the child, and release the terminal.
