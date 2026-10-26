@@ -1151,28 +1151,6 @@ impl Engine {
         operation(session)
     }
 
-    /// Monotonic time of the most recent nonempty successful PTY output read,
-    /// if any. Served to byte-quiet waits; `Ok(None)` only when a session is
-    /// open and no output has arrived yet. A missing session or an emulator
-    /// fault is an error, so a byte-quiet wait can never conflate no-session
-    /// with no-output.
-    #[allow(dead_code)] // Byte-quiet waits consume these observations next in the stack.
-    pub(crate) fn last_output_time(&self) -> Result<Option<Instant>, TuiTestError> {
-        let guard = self.lock_session();
-        let session = guard.as_ref().ok_or_else(TuiTestError::no_session)?;
-        if let Some(fault) = session.fault() {
-            return Err(
-                TuiTestError::internal(fault.clone()).with_report(FailureReport::new(
-                    "terminal.operation",
-                    None,
-                    FailureReason::EmulatorFault,
-                    fault,
-                )),
-            );
-        }
-        Ok(session.last_output_time())
-    }
-
     fn capture_current_screen_sequence(&self, force: bool, pin: bool) -> u64 {
         let guard = self.lock_session();
         let Some(session) = guard.as_ref() else {

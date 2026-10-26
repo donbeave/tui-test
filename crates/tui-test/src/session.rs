@@ -901,17 +901,6 @@ impl Session {
                 .is_ready()
     }
 
-    /// Monotonic time of the most recent nonempty successful PTY output read,
-    /// if any. Served to byte-quiet waits; never derived from
-    /// [`TermState::last_change`].
-    #[allow(dead_code)] // Byte-quiet waits consume these observations next in the stack.
-    pub(crate) fn last_output_time(&self) -> Option<Instant> {
-        self.state
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
-            .last_output
-    }
-
     pub fn flush_recording(&self) -> Result<(), crate::api::TuiTestError> {
         self.recorder.flush().map_err(capture_error)
     }
