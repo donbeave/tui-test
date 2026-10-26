@@ -23,7 +23,7 @@ mod session;
 
 pub use api::*;
 pub use diagnostics::*;
-pub use engine::Engine;
+pub use engine::{CheckedInputError, CheckedMouseAction, Engine};
 pub use launch::{LaunchEnvMode, LaunchOptions, ResolvedLaunch};
 #[cfg(feature = "recording-raster")]
 pub use render::offline::{render_snapshot_png, write_snapshot_png, RenderedPng};
