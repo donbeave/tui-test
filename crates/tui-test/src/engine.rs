@@ -2017,18 +2017,12 @@ impl Engine {
             expectation: None,
             input: InputDetails::capture_bytes(data),
         };
-        self.execute_planned_request(
-            plan,
-            metadata,
-            &context,
-            &|| false,
-            |_, metadata| {
-                self.with_session(|session| {
-                    write_raw_input(session, data, &mut metadata.input)?;
-                    Ok(OperationResult::Unit)
-                })
-            },
-        )
+        self.execute_planned_request(plan, metadata, &context, &|| false, |_, metadata| {
+            self.with_session(|session| {
+                write_raw_input(session, data, &mut metadata.input)?;
+                Ok(OperationResult::Unit)
+            })
+        })
         .map(|_| ())
     }
 
