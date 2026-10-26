@@ -309,16 +309,25 @@ impl PinnedFontSystem {
         self.build_outline(&parsed, glyph_id, key.bold, key.italic, true, key.character)
     }
 
-    /// Face positions serving one style slot, in fallback order. The shaper
-    /// selects one of these per grapheme; an empty result is a missing-face
-    /// error at the call site.
+    /// Face positions serving one style slot, in fallback order. Exact
+    /// style-slot matches come first in existing order; when no face serves
+    /// the requested slot and synthetic styles are selected, every face
+    /// joins in fallback order so the single-scalar, grapheme, and title
+    /// paths synthesize the style instead of failing. Without synthetic
+    /// styles an unserved slot stays empty, which is a missing-face error
+    /// at the call site.
     pub fn style_positions(&self, bold: bool, italic: bool) -> Vec<usize> {
-        self.faces
+        let exact: Vec<usize> = self
+            .faces
             .iter()
             .enumerate()
             .filter(|(_, face)| face.bold == bold && face.italic == italic)
             .map(|(position, _)| position)
-            .collect()
+            .collect();
+        if !exact.is_empty() || !self.synthetic {
+            return exact;
+        }
+        (0..self.faces.len()).collect()
     }
 
     /// Whether the face at `position` maps `character` to a real glyph. A
