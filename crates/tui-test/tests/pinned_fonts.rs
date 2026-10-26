@@ -637,3 +637,4 @@ fn u04_i_synthetic_selection_covers_a_missing_style_slot() {
         "without the selection the missing slot still fails typed"
     );
 }
+
