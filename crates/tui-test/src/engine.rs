@@ -273,9 +273,6 @@ pub struct LiveFrame {
     pub shell: Option<&'static str>,
 }
 
-/// One-line operation description for the verbose log. Open and Run redact env
-/// values (they may contain secrets) and report only the variable count.
-
 /// Coordination flags for one request through the shared wrapper.
 struct RequestPlan {
     waiting: bool,
@@ -324,6 +321,8 @@ fn cancelled_wait_error(metadata: &OperationMetadata) -> TuiTestError {
     ))
 }
 
+/// One-line operation description for the verbose log. Open and Run redact env
+/// values (they may contain secrets) and report only the variable count.
 fn operation_summary(operation: &Operation) -> String {
     match operation {
         Operation::Open(options) => format!(
@@ -631,7 +630,7 @@ impl Engine {
                 result_name,
                 metadata.input.clone(),
             );
-        self.finalize_request_error(&mut result, &context, &metadata);
+        self.finalize_request_error(&mut result, context, &metadata);
         result
     }
 

@@ -823,10 +823,6 @@ fn draw_cursor(
     if cell.underline_color.is_none() {
         paint.underline_color = paint.fg;
     }
-    if unsupported_grapheme(cell.ch.as_str()) {
-        missing.insert(format_glyph_sequence(cell.ch.as_str()));
-        return Ok(());
-    }
     let baseline = panel_origin_y
         + (layout.header_h + layout.content_top + cy as f32 * layout.cell_h + layout.baseline)
             * scale;
