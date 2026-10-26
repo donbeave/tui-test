@@ -750,6 +750,24 @@ fn draw_cell_text(
     Ok(())
 }
 
+/// Clamp a horizontal decoration band inside its cell.
+///
+/// Tiny cells are shorter than the band's nominal offset (an underline sits
+/// three scaled pixels above the cell bottom), so the unclipped rectangle
+/// paints a neighbor row. The band keeps its requested thickness where the
+/// cell fits it and collapses to the cell bounds where it does not.
+fn clamp_decoration_band(
+    origin_y: f32,
+    cell_height: f32,
+    requested_y: f32,
+    scale: f32,
+) -> (f32, f32) {
+    let thickness = scale.max(1.0).min(cell_height);
+    let min_y = origin_y;
+    let max_y = (origin_y + cell_height - thickness).max(origin_y);
+    (requested_y.clamp(min_y, max_y), thickness)
+}
+
 #[allow(clippy::too_many_arguments)]
 fn draw_cursor(
     pixmap: &mut Pixmap,
@@ -898,24 +916,29 @@ fn draw_decorations(
     scale: f32,
 ) {
     if paint.underline {
+        let (y, thickness) = clamp_decoration_band(
+            origin_y,
+            cell_height,
+            origin_y + cell_height - 3.0 * scale,
+            scale,
+        );
         fill_antialiased_rect(
             pixmap,
             origin_x,
-            origin_y + cell_height - 3.0 * scale,
+            y,
             cell_width,
-            scale.max(1.0),
+            thickness,
             paint.underline_color,
         );
     }
     if paint.strike {
-        fill_antialiased_rect(
-            pixmap,
-            origin_x,
+        let (y, thickness) = clamp_decoration_band(
+            origin_y,
+            cell_height,
             baseline - layout.font_size * 0.32 * scale,
-            cell_width,
-            scale.max(1.0),
-            paint.fg,
+            scale,
         );
+        fill_antialiased_rect(pixmap, origin_x, y, cell_width, thickness, paint.fg);
     }
 }
 
