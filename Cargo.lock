@@ -1836,7 +1836,7 @@ dependencies = [
 
 [[package]]
 name = "tui-test-bindgen"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "cbindgen",
@@ -1847,7 +1847,7 @@ dependencies = [
 
 [[package]]
 name = "tui-test-cli"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1859,23 +1859,23 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
- "tui-test-rs",
+ "tuiscotti-tui-test",
  "vte",
  "windows-sys 0.61.2",
 ]
 
 [[package]]
 name = "tui-test-ffi"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
- "tui-test-rs",
+ "tuiscotti-tui-test",
 ]
 
 [[package]]
-name = "tui-test-rs"
-version = "0.1.1"
+name = "tuiscotti-tui-test"
+version = "0.2.0"
 dependencies = [
  "alacritty_terminal",
  "anyhow",

@@ -12,11 +12,11 @@ default-members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.90"
 license = "MIT"
-repository = "https://github.com/microsoft/tui-test"
+repository = "https://github.com/donbeave/tui-test"
 
 [workspace.dependencies]
 alacritty_terminal = "0.26.0"
@@ -43,7 +43,7 @@ serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.150"
 sha2 = "0.10.9"
 toml = "0.9"
-tui-test = { package = "tui-test-rs", path = "crates/tui-test" }
+tui-test = { package = "tuiscotti-tui-test", path = "crates/tui-test" }
 unicode-properties = "0.1.4"
 unicode-width = "0.2.2"
 vte = "0.15"

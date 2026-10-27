@@ -1,5 +1,5 @@
 [package]
-name = "tui-test-rs"
+name = "tuiscotti-tui-test"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -7,6 +7,8 @@ description = "In-process terminal automation, inspection, assertions, and recor
 license.workspace = true
 repository.workspace = true
 readme = "../../README.md"
+keywords = ["terminal", "testing", "automation", "tui", "pty"]
+categories = ["command-line-utilities", "development-tools"]
 
 [lib]
 name = "tui_test"
