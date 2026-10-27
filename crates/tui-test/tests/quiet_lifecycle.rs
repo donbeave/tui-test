@@ -11,8 +11,8 @@ use std::sync::{mpsc, Mutex};
 use std::time::Duration;
 
 use tui_test::{
-    AutomaticRecording, AutomaticRecordingMode, ErrorKind, LocatorQuery, OpenOptions, Operation,
-    RunOptions, Session, Timeouts, WaitQuietMode, WaitQuietOptions,
+    AutomaticRecording, AutomaticRecordingMode, ErrorKind, FailureReason, LocatorQuery,
+    OpenOptions, Operation, RunOptions, Session, Timeouts, WaitQuietMode, WaitQuietOptions,
 };
 
 const FIXTURE: &str = "TUI_TEST_QUIET_LIFECYCLE_FIXTURE";
@@ -286,4 +286,61 @@ fn r8_restart_during_wait_never_reports_success() {
         "completed Restart escaped quiet-wait cancellation (R8)"
     );
     session.close().expect("close terminal");
+}
+
+// R2: a pending quiet wait must not return success after Session::interrupt().
+// The wait parks inside its first cancellation callback (stalled on a
+// channel while holding the shared lifecycle lock); the peer calls
+// interrupt() while the wait is parked, and the gate releases only after
+// interrupt() returns. The wait must report FailureReason::Cancelled in
+// both Bytes and Visual modes. close() runs only after the wait result so
+// no lifecycle announcement can cancel the wait first.
+#[test]
+fn quiet_wait_interrupt_returns_cancelled_in_both_modes() {
+    for (tag, mode) in [
+        ("r2-int-bytes", WaitQuietMode::Bytes),
+        ("r2-int-visual", WaitQuietMode::Visual),
+    ] {
+        let session = fixture_session(tag);
+        let options = WaitQuietOptions::new(Duration::from_secs(30), Duration::from_millis(300))
+            .expect("test options are valid")
+            .with_mode(mode);
+
+        let (entered_tx, entered_rx) = mpsc::channel::<()>();
+        let (release_tx, release_rx) = mpsc::channel::<()>();
+        let entered_tx = Mutex::new(Some(entered_tx));
+        let worker = session.clone();
+        let wait = std::thread::spawn(move || {
+            worker.wait_quiet_cancellable(&options, &|| {
+                if let Some(tx) = entered_tx.lock().unwrap().take() {
+                    let _ = tx.send(());
+                    let _ = release_rx.recv();
+                }
+                false
+            })
+        });
+        entered_rx
+            .recv_timeout(GATE_BOUND)
+            .expect("wait reaches the cancellation gate");
+
+        let interrupter = session.clone();
+        let interrupted = std::thread::spawn(move || {
+            interrupter.interrupt();
+        });
+        join_bounded(interrupted, "interrupt");
+        let _ = release_tx.send(());
+
+        let error = join_bounded(wait, "quiet wait")
+            .expect_err("interrupted quiet wait must not report success");
+        let details = error
+            .details
+            .as_ref()
+            .expect("interrupted quiet wait must carry failure details");
+        assert_eq!(
+            details.reason,
+            FailureReason::Cancelled,
+            "interrupted quiet wait must keep the Cancelled reason (mode {mode:?}): {error}"
+        );
+        session.close().expect("close terminal");
+    }
 }

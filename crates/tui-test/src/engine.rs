@@ -476,8 +476,13 @@ impl Engine {
         let pending = plan
             .lifecycle
             .then(|| LifecycleRequest::new(&self.pending_lifecycle));
-        let cancelled =
-            || cancelled() || (plan.waiting && self.pending_lifecycle.load(Ordering::Acquire) != 0);
+        let cancelled = || {
+            cancelled()
+                || (plan.waiting
+                    && (self.pending_lifecycle.load(Ordering::Acquire) != 0
+                        || self.interrupt_generation.load(Ordering::Acquire)
+                            != interrupt_generation))
+        };
         let _shared = if plan.lifecycle {
             None
         } else if plan.waiting {
