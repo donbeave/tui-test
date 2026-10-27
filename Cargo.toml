@@ -12,11 +12,11 @@ default-members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 rust-version = "1.90"
 license = "MIT"
-repository = "https://github.com/donbeave/tui-test"
+repository = "https://github.com/tailrocks/tui-test"
 
 [workspace.dependencies]
 alacritty_terminal = "0.26.0"
